@@ -1,21 +1,48 @@
-# Logistics Route Optimization & Freight Cost Engine
+# Logistics Route Optimization & Freight Cost Modeling Engine
 
 ## Overview
-This project models multi-city transport efficiency, computes haul distances via vectorized Haversine geometry, calculates freight cost structures, and analyzes lane payload consolidation across 500 shipment records.
+This project models multi-lane freight transportation efficiency across regional origin-destination corridors. It uses geodesic coordinate math (Haversine distance), freight cost structures, and payload consolidation metrics to identify Less-Than-Truckload (LTL) vs. Full-Truckload (FTL) savings.
 
-## Core Metrics & Methodology
-- **Haversine Distance:** Calculates exact great-circle distance between coordinate pairs (origin and destination hubs).
-- **Freight Cost Model:** Applies base rates, distance fees (€1.20/km), weight charges (€0.05/kg), and a 12% fuel surcharge.
-- **Cost per Ton-KM:** Standardizes transport financial expenditure per payload unit moved over distance.
-- **Lane Consolidation:** Aggregates shipments by origin-destination corridors and estimates 24-ton full truckload (FTL) requirements for LTL optimization.
+---
+
+## Core Transport Equations
+
+### 1. Haversine Distance Geometry
+Calculates shortest great-circle distance over Earth's surface from GPS coordinates:
+$$d = 2r \arcsin \left( \sqrt{\sin^2\left(\frac{\Delta \phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta \lambda}{2}\right)} \right)$$
+
+### 2. Freight Cost Breakdown
+$$\text{Total Cost} = \left( \text{Base Rate} + (\text{Distance} \times \text{Rate/km}) + (\text{Weight} \times \text{Rate/kg}) \right) \times (1 + \text{Fuel Surcharge \%})$$
+
+### 3. Ton-KM Efficiency Index
+$$\text{Cost per Ton-KM} = \frac{\text{Total Freight Cost}}{\left(\frac{\text{Weight (kg)}}{1000}\right) \times \text{Distance (km)}}$$
+
+---
+
+## Lane Cost Visual Report
+
+![Freight Spend Chart](reports/freight_spend_chart.png)
+
+---
 
 ## Repository Structure
-- `generate_route_data.py`: Multi-city European shipment dataset generator.
-- `shipments.csv`: Raw dataset containing 500 shipment orders and coordinates.
-- `optimize_routes.py`: Python routing and cost optimization engine.
-- `optimized_freight_routes.xlsx`: Multi-tab workbook with shipment calculations and lane consolidation summaries.
-- `freight_efficiency_distribution.png`: Auto-generated distribution plot of cost per Ton-KM.
 
-## How to Run
-```cmd
-python optimize_routes.py
+```text
+route_optimization_project/
+│
+├── README.md                     <-- Project documentation
+├── requirements.txt              <-- Python dependencies
+├── .gitignore                    <-- Git exclusion rules
+│
+├── data/
+│   ├── raw/
+│   │   └── shipments.csv         <-- Input dataset
+│   └── processed/
+│       ├── optimized_shipments.csv
+│       └── lane_consolidation_summary.xlsx
+│
+├── src/
+│   └── optimize_routes.py        <-- Distance & cost calculation engine
+│
+└── reports/
+    └── freight_spend_chart.png   <-- Lane spend breakdown
